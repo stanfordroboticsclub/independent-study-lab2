@@ -4,7 +4,7 @@
 long last_command = 0; // To keep track of when we last commanded the motors
 C610Bus<CAN2> bus;     // Initialize the Teensy's CAN bus to talk to the motors
 
-int LOOP_DELAY_MILLIS = 2; // Wait for 0.002s between motor updates.
+int LOOP_DELAY_MILLIS = 5; // Wait for 0.005s between motor updates.
 
 const float m1_offset = 0.0;
 const float m2_offset = 0.0;
@@ -23,37 +23,37 @@ float pd_control(float pos,
 void sanitize_current_command(float &command,
                               float pos,
                               float vel,
-                              float max_current = 3000,
+                              float max_current = 2000,
                               float max_pos = 3.141,
-                              float max_vel = 62,
+                              float max_vel = 30,
                               float reduction_factor = 0.1)
 {
   /* Sanitize current command to make it safer.
 
   Clips current command between bounds. Reduces command if actuator outside of position or velocity bounds.
-  Max current defaults to 1000mA. Max position defaults to +-180degs. Max velocity defaults to +-10rotations/s.
+  Max current defaults to 1000mA. Max position defaults to +-180degs. Max velocity defaults to +-5rotations/s.
   */
   command = command > max_current ? max_current : command;
   command = command < -max_current ? -max_current : command;
   if (pos > max_pos || pos < -max_pos)
   {
-    command *= reduction_factor;
     Serial.println("ERROR: Actuator position outside of allowed bounds.");
   }
   if (vel > max_vel || vel < -max_vel)
   {
-    command *= reduction_factor;
-    Serial.println("ERROR: Actuactor velocity outside of allowed bounds.");
+    command = 0;
+    Serial.println("ERROR: Actuactor velocity outside of allowed bounds. Setting torque to 0.");
   }
 }
 
 // This code waits for the user to type s before executing code.
 void setup()
 {
-  while (!Serial.available())
-  {
+  // Remove all characters that might have been stored up in the serial input buffer prior to running this program
+  while (Serial.available()) {
+    Serial.read();
   }
-  Serial.println("Press s to start.");
+  long last_print = millis();
   while (true)
   {
     char c = Serial.read();
@@ -61,6 +61,10 @@ void setup()
     {
       Serial.println("Starting code.");
       break;
+    }
+    if (millis() - last_print > 2000) {
+      Serial.println("Press s to start.");
+      last_print = millis();
     }
   }
 }
@@ -107,7 +111,7 @@ void loop()
 
     // Step 5. Your PD controller is run here.
     float Kp = 1000.0;
-    float Kd = 100.0;
+    float Kd = 0;//100.0;
     float target_position = 0.;
     m0_current = pd_control(m0_pos, m0_vel, target_position, Kp, Kd);
 
