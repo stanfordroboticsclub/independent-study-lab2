@@ -4,7 +4,7 @@
 long last_command = 0; // To keep track of when we last commanded the motors
 C610Bus<CAN2> bus;     // Initialize the Teensy's CAN bus to talk to the motors
 
-int LOOP_DELAY_MILLIS = 5; // Wait for 0.005s between motor updates.
+const int LOOP_DELAY_MILLIS = 5; // Wait for 0.005s between motor updates.
 
 const float m1_offset = 0.0;
 const float m2_offset = 0.0;
@@ -111,7 +111,7 @@ void loop()
 
     // Step 5. Your PD controller is run here.
     float Kp = 1000.0;
-    float Kd = 0;//100.0;
+    float Kd = 0;
     float target_position = 0.;
     m0_current = pd_control(m0_pos, m0_vel, target_position, Kp, Kd);
 
@@ -131,7 +131,7 @@ void loop()
     Serial.print("\tm2_vel: ");
     Serial.print(m2_vel);
     // m1_current = YOUR PID CODE
-    // m2_current = pid
+    // m2_current = YOUR PID CODE
 
     // Sanitizes your computed current commands to make the robot safer.
     sanitize_current_command(m0_current, m0_pos, m0_vel);
@@ -139,6 +139,8 @@ void loop()
     sanitize_current_command(m2_current, m2_pos, m2_vel);
     // Only call CommandTorques once per loop! Calling it multiple times will override the last command.
     bus.CommandTorques(m0_current, m1_current, m2_current, 0, C610Subbus::kIDZeroToThree);
+    // Once you motors with ID=4 to 7, use this command
+    // bus.CommandTorques(0, 0, 0, 0, C610Subbus::kIDFourToSeven);
 
     last_command = now;
     Serial.println();
