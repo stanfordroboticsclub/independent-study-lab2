@@ -16,8 +16,7 @@ float pd_control(float pos,
                  float Kp,
                  float Kd)
 {
-  // return 0.0; // YOUR CODE HERE
-  return Kp * (target - pos) + Kd * (-vel);
+  return 0.0; // YOUR CODE HERE
 }
 
 void sanitize_current_command(float &command,
