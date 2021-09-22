@@ -98,6 +98,12 @@ void loop()
     float m1_current = 0.0;
     float m2_current = 0.0;
 
+    // Step 5. Your PD controller is run here.
+    float Kp = 1000.0;
+    float Kd = 0;
+    float target_position = 0.;
+    m0_current = pd_control(m0_pos, m0_vel, target_position, Kp, Kd);
+
     // Step 4. Uncomment for bang-bang control
     // if(m0_pos < 0) {
     //   m0_current = 800;
@@ -107,12 +113,6 @@ void loop()
 
     // Step 8. Change the target position to something periodic
     // float time = millis() / 1000.0; // millis() returns the time in milliseconds since start of program
-
-    // Step 5. Your PD controller is run here.
-    float Kp = 1000.0;
-    float Kd = 0;
-    float target_position = 0.;
-    m0_current = pd_control(m0_pos, m0_vel, target_position, Kp, Kd);
 
     // Step 10. Program periodic motion for all three motors.
 
