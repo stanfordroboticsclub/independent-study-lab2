@@ -1,5 +1,12 @@
 #include "Arduino.h"
 
+template <class T>
+inline Print &operator<<(Print &obj, T arg) // no-cost stream operator as described at http://arduiniana.org/libraries/streaming/
+{
+  obj.print(arg);
+  return obj;
+}
+
 void wait_for_key(char s)
 {
     long last_print = millis();

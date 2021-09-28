@@ -9,26 +9,19 @@
 
 #define DO_TESTS
 
-template <class T>
-inline Print &operator<<(Print &obj, T arg) // no-cost stream operator as described at http://arduiniana.org/libraries/streaming/
-{
-  obj.print(arg);
-  return obj;
-}
-
 long last_command = 0; // To keep track of when we last commanded the motors
-C610Bus<CAN2> bus;     // Initialize the Teensy's CAN bus to talk to the motors
+C610Bus<CAN2> bus;     // Initialize the Teensy's CAN bus to talk to the rear Pupper motors
 
 const int LOOP_DELAY_MILLIS = 5; // Wait for 0.005s between motor updates.
 
-const float Kp = 1000;
+const float Kp = 2000;
 const float Kd = 100;
+const float kMaxCurrent = 3000;
 
 BLA::Matrix<3> actuator_angles{0, 0, 0};     // rad
 BLA::Matrix<3> actuator_velocities{0, 0, 0}; // rad/s
 BLA::Matrix<3> actuator_commands{0, 0, 0};   // mA
 
-// This code waits for the user to type s before executing code.
 void setup()
 {
 #ifdef DO_TESTS
@@ -67,12 +60,24 @@ void loop()
     Serial.println();
 
     BLA::Matrix<3> targets{0, 0, 0};
-    actuator_commands = vectorized_pd(actuator_angles, actuator_velocities, targets, Kp, Kd);
-    actuator_commands = vectorized_sanitize(actuator_commands, actuator_angles, actuator_velocities);
+    actuator_commands = vectorized_pd(actuator_angles,
+                                      actuator_velocities,
+                                      targets,
+                                      Kp,
+                                      Kd);
+    actuator_commands = vectorized_sanitize(actuator_commands,
+                                            actuator_angles,
+                                            actuator_velocities,
+                                            kMaxCurrent);
 
     // Only call CommandTorques once per loop! Calling it multiple times will override the last command.
-    bus.CommandTorques(actuator_commands(0), actuator_commands(1), actuator_commands(2), 0, C610Subbus::kIDZeroToThree);
-    // Once you motors with ID=4 to 7, use this command
+    bus.CommandTorques(actuator_commands(0),
+                       actuator_commands(1),
+                       actuator_commands(2),
+                       0,
+                       C610Subbus::kIDZeroToThree);
+
+    // Once you have motors with ID=4 to 7, use this command
     // bus.CommandTorques(0, 0, 0, 0, C610Subbus::kIDFourToSeven);
 
     last_command = now;
