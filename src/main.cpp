@@ -24,12 +24,11 @@ BLA::Matrix<3> actuator_commands{0, 0, 0};   // mA
 
 void setup()
 {
-#ifdef DO_TESTS
-  delay(3000);
-  test_kinematics();
-#endif
   clear_serial_buffer();
   wait_for_key('s');
+#ifdef DO_TESTS
+  test_kinematics();
+#endif
 }
 
 void loop()
