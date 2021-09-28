@@ -25,6 +25,7 @@ BLA::Matrix<3> actuator_commands{0, 0, 0};   // mA
 void setup()
 {
 #ifdef DO_TESTS
+  delay(3000);
   test_kinematics();
 #endif
   clear_serial_buffer();
@@ -55,9 +56,12 @@ void loop()
     {
       actuator_angles(i) = bus.Get(i).Position();
       actuator_velocities(i) = bus.Get(i).Velocity();
-      Serial << " pos(" << i << ")=" << actuator_angles(i) << " vel(" << i << ")=" << actuator_velocities(i);
     }
-    Serial.println();
+    Serial.print("Pos: ");
+    print_vector(actuator_angles, ' ', '\0');
+    Serial.print("\tVel: ");
+    print_vector(actuator_velocities, ' ', '\0');
+    Serial.println("\tPress s to stop.");
 
     BLA::Matrix<3> targets{0, 0, 0};
     actuator_commands = vectorized_pd(actuator_angles,
