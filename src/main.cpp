@@ -7,7 +7,7 @@
 #include "test_kinematics.h"
 #include "utils.h"
 
-#define DO_TESTS
+#define DO_TESTS // comment out to skip running tests before executing main program
 
 long last_command = 0; // To keep track of when we last commanded the motors
 C610Bus<CAN2> bus;     // Initialize the Teensy's CAN bus to talk to the rear Pupper motors
