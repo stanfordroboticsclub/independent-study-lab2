@@ -41,7 +41,7 @@ void loop()
   {
     if (Serial.read() == 's')
     {
-      bus.CommandTorques(0, 0, 0, 0, C610Subbus::kIDZeroToThree);
+      bus.CommandTorques(0, 0, 0, 0, C610Subbus::kOneToFourBlinks);
       Serial.println("Stopping.");
       while (true)
       {
@@ -78,10 +78,10 @@ void loop()
                        actuator_commands(1),
                        actuator_commands(2),
                        0,
-                       C610Subbus::kIDZeroToThree);
+                       C610Subbus::kOneToFourBlinks);
 
     // Once you have motors with ID=4 to 7, use this command
-    // bus.CommandTorques(0, 0, 0, 0, C610Subbus::kIDFourToSeven);
+    // bus.CommandTorques(0, 0, 0, 0, C610Subbus::kFiveToEightBlinks);
 
     last_command = now;
     Serial.println();
