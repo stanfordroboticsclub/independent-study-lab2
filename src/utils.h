@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Arduino.h"
+#include <string.h>
 
 template <class T>
 inline Print &operator<<(Print &obj, T arg) // no-cost stream operator as described at http://arduiniana.org/libraries/streaming/
@@ -33,7 +34,7 @@ void assert_close(float a, float b, float eps = 0.000001)
   assert(absolute_val(a - b) < eps);
 }
 
-void wait_for_key(char s)
+void wait_for_key(char s, const String &prompt = "")
 {
   long last_print = millis();
   while (true)
@@ -48,7 +49,12 @@ void wait_for_key(char s)
     {
       Serial.print("Click inside this console and then press ");
       Serial.print(s);
-      Serial.println(" to start...");
+      Serial.print(" to start...");
+      if (prompt != "")
+      {
+        Serial.print(prompt);
+      }
+      Serial.println();
       last_print = millis();
     }
   }
