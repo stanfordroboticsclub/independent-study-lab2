@@ -9,6 +9,12 @@
 
 #define DO_TESTS // comment out to skip running tests before executing main program
 
+/*********** STUDENT CONFIGURATION NECESSARY *************/
+// Examine your robot leg to see if you built a left leg or a right leg.
+// Then replace kUnspecified with the correct side.
+const BodySide kLegSide = BodySide::kUnspecified; // Replace with BodySide::kLeft or BodySide::kRight
+/*********************************************************/
+
 long last_command = 0; // To keep track of when we last commanded the motors
 C610Bus<CAN2> bus;     // Initialize the Teensy's CAN bus to talk to the rear Pupper motors
 
@@ -18,7 +24,8 @@ const float Kp = 2000;
 const float Kd = 100;
 const float kMaxCurrent = 3000;
 
-const KinematicsConfig pupper_leg_config{0.035, 0.08, 0.12};
+// Define the signed hip offset and link lengths
+const KinematicsConfig pupper_leg_config = (kLegSide == BodySide::kLeft) ? KinematicsConfig{0.035, 0.08, 0.12} : KinematicsConfig{-0.035, 0.08, 0.12};
 
 BLA::Matrix<3> actuator_angles{0, 0, 0};     // rad
 BLA::Matrix<3> actuator_velocities{0, 0, 0}; // rad/s
@@ -39,6 +46,7 @@ void loop()
 
   long now = millis();
 
+  // Check to see if we received a 's' and if so, stop the program.
   if (Serial.available())
   {
     if (Serial.read() == 's')
@@ -51,6 +59,7 @@ void loop()
     }
   }
 
+  // Check to see if it's time to run our control loop again.
   if (now - last_command >= LOOP_DELAY_MILLIS)
   {
     for (int i = 0; i < 3; i++)
@@ -58,8 +67,8 @@ void loop()
       actuator_angles(i) = bus.Get(i).Position();
       actuator_velocities(i) = bus.Get(i).Velocity();
     }
-    actuator_angles = correct_for_actuator_direction(actuator_angles, BodySide::kLeft);
-    actuator_velocities = correct_for_actuator_direction(actuator_angles, BodySide::kLeft);
+    actuator_angles = correct_for_actuator_direction(actuator_angles, kLegSide);
+    actuator_velocities = correct_for_actuator_direction(actuator_angles, kLegSide);
 
     BLA::Matrix<3> cartesian_coordinates = forward_kinematics(actuator_angles, pupper_leg_config);
 
