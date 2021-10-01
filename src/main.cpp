@@ -85,6 +85,9 @@ void loop()
     //   Serial.println("OUTSIDE SAFETY BOX.");
 
       // Insert your code for providing haptic feedback here
+      // Reasonable amplitudes for sinusoidal vibration are 800 - 3000.
+      // The units are mA, which is what the CommandTorques function expects.
+      // Also recognize that millis() returns the current time in milliseconds.
       // actuator_commands = blah;
     // }
 
