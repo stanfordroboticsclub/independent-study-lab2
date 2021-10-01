@@ -36,11 +36,11 @@ BLA::Matrix<3> correct_for_actuator_direction(const BLA::Matrix<3> &joint_vector
 {
   if (side == BodySide::kLeft)
   {
-    return {-joint_vector(0), -joint_vector(1), joint_vector(2)};
+    return {-joint_vector(0), joint_vector(1), -joint_vector(2)};
   }
   else if (side == BodySide::kRight)
   {
-    return {-joint_vector(0), joint_vector(1), -joint_vector(2)};
+    return {-joint_vector(0), -joint_vector(1), joint_vector(2)};
   }
   else
   {
