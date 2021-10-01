@@ -83,16 +83,18 @@ void loop()
     // Insert your code for checking if the robot end-effector is outside the safety box here
     // if(your code here) {
     //   Serial.println("OUTSIDE SAFETY BOX.");
-    // }
 
-    // Insert your code for providing haptic feedback here
-    // actuator_commands = blah;
+      // Insert your code for providing haptic feedback here
+      // actuator_commands = blah;
+    // }
 
     actuator_commands = vectorized_sanitize(actuator_commands,
                                             actuator_angles,
                                             actuator_velocities,
                                             kMaxCurrent);
 
+    // Put the torque commands to be the each motors local coordinate frame
+    actuator_commands = correct_for_actuator_direction(actuator_commands, kLegSide);
     // Only call CommandTorques once per loop! Calling it multiple times will override the last command.
     bus.CommandTorques(actuator_commands(0),
                        actuator_commands(1),
