@@ -25,7 +25,7 @@ const float Kd = 100;
 const float kMaxCurrent = 3000;
 
 // Define the signed hip offset and link lengths
-const KinematicsConfig pupper_leg_config = (kLegSide == BodySide::kLeft) ? KinematicsConfig{0.035, 0.08, 0.12} : KinematicsConfig{-0.035, 0.08, 0.12};
+const KinematicsConfig pupper_leg_config = (kLegSide == BodySide::kLeft) ? KinematicsConfig{0.035, 0.08, 0.11} : KinematicsConfig{-0.035, 0.08, 0.11};
 
 BLA::Matrix<3> actuator_angles{0, 0, 0};     // rad
 BLA::Matrix<3> actuator_velocities{0, 0, 0}; // rad/s

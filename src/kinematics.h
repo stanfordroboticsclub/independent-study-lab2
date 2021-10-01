@@ -5,9 +5,9 @@
 
 struct KinematicsConfig
 {
-  float hip_offset;
   float l1;
   float l2;
+  float l3;
 };
 
 BLA::Matrix<3> forward_kinematics(const BLA::Matrix<3> &joint_angles, const KinematicsConfig &config)
